@@ -1,13 +1,12 @@
 [tool.poetry]
-name = "test_pendulum"
+name = "test_shellcheck_py"
 version = "0.1.0"
 description = ""
-authors = ["Your Name <you@example.com>"]
-license = "MIT"
+authors = []
 
 [tool.poetry.dependencies]
-python = "^3.11"
-pendulum = "^3.0.0"
+python = "^3.8" # Based on https://pypi.org/project/shellcheck-py/
+shellcheck-py = "*"
 
 [build-system]
 requires = ["poetry-core"]

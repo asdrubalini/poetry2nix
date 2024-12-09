@@ -1618,7 +1618,14 @@
     "setuptools"
   ],
   "autograd": [
-    "setuptools"
+    {
+      "buildSystem": "setuptools",
+      "until": "1.7.0"
+    },
+    {
+      "buildSystem": "hatchling",
+      "from": "1.7.0"
+    }
   ],
   "autoit-ripper": [
     "setuptools"
@@ -1641,6 +1648,10 @@
   ],
   "autopep8": [
     "setuptools"
+  ],
+  "autoray": [
+    "setuptools",
+    "setuptools-scm"
   ],
   "autoslot": [
     "flit-core"
@@ -2467,6 +2478,9 @@
   "bayespy": [
     "setuptools"
   ],
+  "bbcode": [
+    "setuptools"
+  ],
   "bbox": [
     "poetry-core",
     "setuptools"
@@ -2718,6 +2732,9 @@
   ],
   "blebox-uniapi": [
     "setuptools"
+  ],
+  "blendmodes": [
+    "poetry-core"
   ],
   "bless": [
     "setuptools"
@@ -4305,6 +4322,9 @@
   "criticality-score": [
     "setuptools"
   ],
+  "cron-converter": [
+    "setuptools"
+  ],
   "cron-descriptor": [
     "setuptools"
   ],
@@ -4521,6 +4541,9 @@
     "setuptools"
   ],
   "daemonocle": [
+    "setuptools"
+  ],
+  "daff": [
     "setuptools"
   ],
   "daiquiri": [
@@ -6094,6 +6117,9 @@
   "duo-client": [
     "setuptools"
   ],
+  "durationpy": [
+    "setuptools"
+  ],
   "durus": [
     "setuptools"
   ],
@@ -6728,6 +6754,10 @@
   "facedancer": [
     "setuptools"
   ],
+  "facexlib": [
+    "cython",
+    "setuptools-scm"
+  ],
   "factory-boy": [
     "setuptools"
   ],
@@ -6941,7 +6971,11 @@
     "setuptools"
   ],
   "ffmpy": [
-    "setuptools"
+    "setuptools",
+    {
+      "buildSystem": "poetry-core",
+      "from": "0.4.0"
+    }
   ],
   "fhconfparser": [
     "poetry-core"
@@ -9180,6 +9214,9 @@
   "huey": [
     "setuptools"
   ],
+  "hug": [
+    "setuptools"
+  ],
   "huggingface-hub": [
     "setuptools"
   ],
@@ -10770,7 +10807,14 @@
     "setuptools"
   ],
   "lazy-loader": [
-    "flit-core"
+    {
+      "buildSystem": "flit-core",
+      "until": "0.4"
+    },
+    {
+      "buildSystem": "setuptools",
+      "from": "0.4"
+    }
   ],
   "lazy-object-proxy": [
     "setuptools",
@@ -11362,6 +11406,9 @@
   "lsprotocol": [
     "flit-core"
   ],
+  "luaparser": [
+    "setuptools"
+  ],
   "luddite": [
     "setuptools"
   ],
@@ -11600,6 +11647,9 @@
     "setuptools"
   ],
   "marshmallow-enum": [
+    "setuptools"
+  ],
+  "marshmallow-jsonschema": [
     "setuptools"
   ],
   "marshmallow-objects": [
@@ -13769,6 +13819,9 @@
     "setuptools",
     "setuptools-scm"
   ],
+  "narwhals": [
+    "hatchling"
+  ],
   "nats-py": [
     "setuptools"
   ],
@@ -13890,6 +13943,16 @@
   "neoteroi-mkdocs": [
     "hatchling",
     "setuptools"
+  ],
+  "nepattern": [
+    {
+      "buildSystem": "pdm-pep517",
+      "until": "0.7.0"
+    },
+    {
+      "buildSystem": "pdm-backend",
+      "from": "0.7.0"
+    }
   ],
   "nessclient": [
     "setuptools"
@@ -14904,7 +14967,22 @@
     "setuptools"
   ],
   "opt-einsum": [
-    "setuptools"
+    {
+      "buildSystem": "setuptools",
+      "until": "3.4.0"
+    },
+    {
+      "buildSystem": "hatch-fancy-pypi-readme",
+      "from": "3.4.0"
+    },
+    {
+      "buildSystem": "hatch-vcs",
+      "from": "3.4.0"
+    },
+    {
+      "buildSystem": "hatchling",
+      "from": "3.4.0"
+    }
   ],
   "optax": [
     "flit-core",
@@ -15478,7 +15556,14 @@
   ],
   "pdoc3": [
     "setuptools",
-    "setuptools-scm"
+    "setuptools-scm",
+    {
+      "buildSystem": "setuptools-git",
+      "from": "0.5.0"
+    }
+  ],
+  "pdocs": [
+    "poetry"
   ],
   "pdunehd": [
     "setuptools"
@@ -15531,6 +15616,7 @@
     "setuptools"
   ],
   "pendulum": [
+    "maturin",
     "poetry-core",
     "setuptools"
   ],
@@ -15702,6 +15788,9 @@
     "setuptools"
   ],
   "pillow": [
+    "setuptools"
+  ],
+  "pillow-avif-plugin": [
     "setuptools"
   ],
   "pillow-heif": [
@@ -16067,6 +16156,9 @@
   "portpicker": [
     "setuptools"
   ],
+  "portray": [
+    "poetry"
+  ],
   "posix-ipc": [
     "setuptools"
   ],
@@ -16291,6 +16383,10 @@
   "protobuf3-to-dict": [
     "setuptools"
   ],
+  "protoc-gen-openapiv2": [
+    "setuptools",
+    "wheel"
+  ],
   "protoletariat": [
     "poetry-core"
   ],
@@ -16434,7 +16530,14 @@
     "setuptools"
   ],
   "pudb": [
-    "setuptools"
+    {
+      "buildSystem": "setuptools",
+      "until": "2024.1.3"
+    },
+    {
+      "buildSystem": "hatchling",
+      "from": "2024.1.3"
+    }
   ],
   "pueblo": [
     "setuptools"
@@ -18044,7 +18147,15 @@
     "setuptools"
   ],
   "pymongo": [
-    "setuptools"
+    "setuptools",
+    {
+      "buildSystem": "hatch-requirements-txt",
+      "from": "4.9"
+    },
+    {
+      "buildSystem": "hatchling",
+      "from": "4.9"
+    }
   ],
   "pymongo-inmemory": [
     "poetry-core"
@@ -20301,7 +20412,14 @@
     "setuptools"
   ],
   "pytoolconfig": [
-    "pdm-pep517"
+    {
+      "buildSystem": "pdm-pep517",
+      "until": "1.2.6"
+    },
+    {
+      "buildSystem": "pdm-backend",
+      "from": "1.2.6"
+    }
   ],
   "pytools": [
     "setuptools"
@@ -20513,7 +20631,15 @@
   ],
   "pywavelets": [
     "cython",
-    "setuptools"
+    "setuptools",
+    {
+      "buildSystem": "meson-python",
+      "from": "1.5.0"
+    },
+    {
+      "buildSystem": "ninja",
+      "from": "1.5.0"
+    }
   ],
   "pywayland": [
     "setuptools"
@@ -21235,6 +21361,9 @@
     "setuptools"
   ],
   "reserved": [
+    "setuptools"
+  ],
+  "resize-right": [
     "setuptools"
   ],
   "resolvelib": [
@@ -23563,6 +23692,9 @@
   "sumtypes": [
     "setuptools"
   ],
+  "suncalc": [
+    "setuptools"
+  ],
   "sunpy": [
     "setuptools",
     "setuptools-scm"
@@ -24248,6 +24380,9 @@
   "timing-asgi": [
     "poetry-core"
   ],
+  "timm": [
+    "pdm-backend"
+  ],
   "tiny-cuda-nn": [
     "setuptools"
   ],
@@ -24408,6 +24543,9 @@
   ],
   "torch-bin": [
     "setuptools"
+  ],
+  "torch-geometric": [
+    "flit-core"
   ],
   "torch-pitch-shift": [
     "setuptools"

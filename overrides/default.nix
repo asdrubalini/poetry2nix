@@ -615,6 +615,7 @@ lib.composeManyExtensions [
             "42.0.8" = "sha256-PgxPcFocEhnQyrsNtCN8YHiMptBmk1PUhEDQFdUR1nU=";
             "43.0.0" = "sha256-TEQy8PrIaZshiBFTqR/OJp3e/bVM1USjcmpDYcjPJPM=";
             "43.0.1" = "sha256-wiAHM0ucR1X7GunZX8V0Jk2Hsi+dVdGgDKqcYjSdD7Q=";
+            "43.0.3" = "sha256-d3Gt4VrBWk6qowwX0Epp4mc1PbySARVU9YMsHYKImCs=";
           }.${version} or (
             lib.warn "Unknown cryptography version: '${version}'. Please update getCargoHash." lib.fakeHash
           );
@@ -1502,6 +1503,13 @@ lib.composeManyExtensions [
         }
       );
 
+      mariadb = prev.mariadb.overridePythonAttrs (
+        old: {
+          nativeBuildInputs = old.nativeBuildInputs or [ ] ++ [ pkg-config pkgs.libmysqlclient ];
+          buildInputs = old.buildInputs or [ ] ++ [ pkgs.libmysqlclient ];
+        }
+      );
+
       markdown-it-py = prev.markdown-it-py.overridePythonAttrs (
         old: {
           propagatedBuildInputs = builtins.filter (i: i.pname != "mdit-py-plugins") old.propagatedBuildInputs;
@@ -1986,6 +1994,29 @@ lib.composeManyExtensions [
         }
       );
 
+      open-clip-torch = prev.open-clip-torch.overridePythonAttrs (
+        # The sdist from pypi doesn't contain the requirements.txt
+        old:
+        lib.optionalAttrs (!(old.src.isWheel or false)) (
+          let
+            githubHash =
+              {
+                "2.20.0" = "sha256-Ca4oi2LqleIFAGBJB7YIi4nXe2XhOP6ErDFXgXtJLxM=";
+              }.${old.version} or lib.fakeHash;
+
+            src = pkgs.fetchFromGitHub {
+              owner = "mlfoundations";
+              repo = "open_clip";
+              rev = "v${old.version}";
+              sha256 = githubHash;
+            };
+          in
+          {
+            inherit src;
+          }
+        )
+      );
+
       orjson = prev.orjson.overridePythonAttrs (
         old: lib.optionalAttrs (!(old.src.isWheel or false)) (
           let
@@ -2113,8 +2144,15 @@ lib.composeManyExtensions [
         propagatedBuildInputs = old.propagatedBuildInputs or [ ] ++ [ final.pyutilib ];
       });
 
-      paramiko = prev.paramiko.overridePythonAttrs (_: {
+      paramiko = prev.paramiko.overridePythonAttrs (old: {
         doCheck = false; # requires networking
+
+        optional-dependencies = old.optional-dependencies or {
+          ed25519 = [
+            final.pynacl
+            final.bcrypt
+          ];
+        };
       });
 
       parsel = prev.parsel.overridePythonAttrs (
@@ -2193,6 +2231,12 @@ lib.composeManyExtensions [
         }
       );
 
+      pillow-avif-plugin = prev.pillow-avif-plugin.overridePythonAttrs (
+        old: {
+          buildInputs = old.buildInputs or [ ] ++ [ pkgs.libavif ];
+        }
+      );
+
       pillow-heif = prev.pillow-heif.overridePythonAttrs (
         old: {
           nativeBuildInputs = old.nativeBuildInputs or [ ] ++ [ pkg-config ];
@@ -2251,6 +2295,11 @@ lib.composeManyExtensions [
 
       prettytable = prev.prettytable.overridePythonAttrs (old: {
         propagatedBuildInputs = old.propagatedBuildInputs or [ ] ++ [ final.setuptools ];
+      });
+
+      propcache = prev.propcache.overridePythonAttrs (old: {
+        nativeBuildInputs = old.nativeBuildInputs or [ ]
+          ++ lib.optionals (final.pythonOlder "3.11") [ final.tomli ];
       });
 
       prophet = prev.prophet.overridePythonAttrs (old: {
@@ -2748,11 +2797,7 @@ lib.composeManyExtensions [
 
       pyqt6 =
         let
-          # The build from source fails unless the pyqt6 version agrees
-          # with the version of qt6 from nixpkgs. Thus, we prefer using
-          # the wheel here.
-          pyqt6-wheel = prev.pyqt6.override { preferWheel = true; };
-          pyqt6 = pyqt6-wheel.overridePythonAttrs (old:
+          pyqt6 = prev.pyqt6.overridePythonAttrs (old:
             let
               confirm-license = pkgs.writeText "confirm-license.patch" ''
                 diff --git a/project.py b/project.py
@@ -3105,7 +3150,7 @@ lib.composeManyExtensions [
       pyzmq = prev.pyzmq.overridePythonAttrs (
         old: {
           nativeBuildInputs = old.nativeBuildInputs or [ ] ++ [ pkg-config ];
-          propagatedBuildInputs = old.propagatedBuildInputs or [ ] ++ [ pkgs.zeromq ];
+          propagatedBuildInputs = old.propagatedBuildInputs or [ ] ++ [ pkgs.zeromq pkgs.libsodium ];
           # setting dontUseCmakeConfigure is necessary because:
           #
           # 1. pyzmq uses scikit-build-core as of pyzmq version 26.0.0
@@ -3250,6 +3295,7 @@ lib.composeManyExtensions [
             "0.19.0" = "sha256-H9IAg4lh7cmGaML5PuyYoe026pBNhOyvb/cf+oZcv0c=";
             "0.19.1" = "sha256-qIXdoCEVGCGUnTicZp4bUTJyGpFy9dwWY03lXUbxiHg=";
             "0.20.0" = "sha256-5vbR2EbrAPJ8pb78tj/+r9nOWgQDT5aO/LUQI4kAGjU=";
+            "0.20.1" = "sha256-vqJCGlp5S2wECfgleCexCb9xegA8b6wo7YNBbcsbXqk=";
           }.${version} or (
             lib.warn "Unknown rpds-py version: '${version}'. Please update getCargoHash." lib.fakeHash
           );
@@ -3709,22 +3755,23 @@ lib.composeManyExtensions [
       });
 
       shellcheck-py = prev.shellcheck-py.overridePythonAttrs (old: {
-
         # Make fetching/installing external binaries no-ops
         preConfigure =
           let
             fakeCommand = "type('FakeCommand', (Command,), {'initialize_options': lambda self: None, 'finalize_options': lambda self: None, 'run': lambda self: None})";
           in
           ''
+            # remove setup.cfg since it causes remote package access
+            rm -f setup.cfg
+
             substituteInPlace setup.py \
               --replace-warn "'fetch_binaries': fetch_binaries," "'fetch_binaries': ${fakeCommand}," \
               --replace-warn "'install_shellcheck': install_shellcheck," "'install_shellcheck': ${fakeCommand},"
           '';
 
-        propagatedUserEnvPkgs = (old.propagatedUserEnvPkgs or [ ]) ++ [
+        propagatedUserEnvPkgs = old.propagatedUserEnvPkgs or [ ] ++ [
           pkgs.shellcheck
         ];
-
       });
 
       soundfile =
@@ -4278,7 +4325,7 @@ lib.composeManyExtensions [
 
       mkdocs-material = prev.mkdocs-material.overridePythonAttrs (old: {
         postPatch = old.postPatch or "" + ''
-          sed -i 's/"Framework :: MkDocs",//' pyproject.toml
+          substituteInPlace pyproject.toml --replace-warn 'filename = "requirements.txt"' ""
         '';
       });
 

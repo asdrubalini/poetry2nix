@@ -1,3 +1,4 @@
+
 let
   flake = builtins.getFlake "${toString ../.}";
 in
@@ -10,8 +11,16 @@ in
   }
 }:
 let
-  poetry2nix = import ./.. { inherit pkgs; };
-  callTest = test: attrs: pkgs.callPackage test ({ inherit poetry2nix; } // attrs);
+  pkgs' = pkgs // {
+    inherit poetry2nix;
+
+    # At the time of writing 3.12 is causing issues.
+    python3 = pkgs.python311;
+    python = pkgs.python311;
+  };
+
+  poetry2nix = import ./.. { pkgs = pkgs'; };
+  callTest = lib.callPackageWith pkgs';
 
   inherit (pkgs) lib stdenv;
 
@@ -129,6 +138,7 @@ in
   shapely-wheel = callTest ./shapely-wheel { };
   cffi-pandas-wheel = callTest ./cffi-pandas-wheel { };
   mkdocstrings-wheel = callTest ./mkdocstrings-wheel { };
+  mkdocs-material = callTest ./mkdocs-material { };
   test-extras = callTest ./test-extras { };
   test-no-extras = callTest ./test-no-extras { };
   missing-iswheel = callTest ./missing-iswheel { };
@@ -179,6 +189,8 @@ in
   dask-dataframe = callTest ./dask-dataframe { };
   argon2-cffi-bindings-python-3-12 = callTest ./argon2-cffi-bindings-python-3-12 { };
   cyclonedx-and-sarif-tools = callTest ./cyclonedx-and-sarif-tools { };
+  propcache = callTest ./propcache { };
+  shellcheck-py = callTest ./shellcheck-py { };
 } // lib.optionalAttrs (!stdenv.isDarwin) {
   # Editable tests fails on Darwin because of sandbox paths
   pep600 = callTest ./pep600 { };
