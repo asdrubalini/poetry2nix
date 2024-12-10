@@ -3296,7 +3296,6 @@ lib.composeManyExtensions [
             "0.19.1" = "sha256-qIXdoCEVGCGUnTicZp4bUTJyGpFy9dwWY03lXUbxiHg=";
             "0.20.0" = "sha256-5vbR2EbrAPJ8pb78tj/+r9nOWgQDT5aO/LUQI4kAGjU=";
             "0.20.1" = "sha256-vqJCGlp5S2wECfgleCexCb9xegA8b6wo7YNBbcsbXqk=";
-            "0.22.3" = lib.fakeHash;
           }.${version} or (
             lib.warn "Unknown rpds-py version: '${version}'. Please update getCargoHash." lib.fakeHash
           );
@@ -3987,6 +3986,7 @@ lib.composeManyExtensions [
             "0.12" = "16788a0d8n1bb705f0k3dvav2fmbbl6pcikwpgarl1l3fcfff8kl";
             "0.11" = "0vx56h9wfxj7x3aq7jign4rnlfm7x9nhjwmsv8p22acbzbs10dgv";
             "0.10" = "0ypdy9sq4211djqh4ni5ap9l7whq9hw0vhsxjfl3a0a4czlldxqp";
+            "1.0.0" = "0ypdy9sq4211djqh4ni5ap9l7whq9hw0vhsxjfl3a0a4czlldxqp";
           }.${version};
           sha256 = getRepoHash prev.watchfiles.version;
 
