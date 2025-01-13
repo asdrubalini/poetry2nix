@@ -1,12 +1,12 @@
 [tool.poetry]
-name = "test_cryptography"
+name = "click-pre-8_1_8"
 version = "0.1.0"
 description = ""
-authors = []
+authors = ["Your Name <you@example.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
-cryptography = "*"
+click = "<8.1.8"
 
 [build-system]
 requires = ["poetry-core"]

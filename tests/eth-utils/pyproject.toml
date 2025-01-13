@@ -1,12 +1,14 @@
 [tool.poetry]
-name = "test_cryptography"
+name = "eth-utils-test"
 version = "0.1.0"
 description = ""
-authors = []
+authors = ["Your Name <you@example.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.10"
-cryptography = "*"
+python = "^3.11"
+eth-utils = "^5.1.0"
+eth-hash = "^0.7.0"
+
 
 [build-system]
 requires = ["poetry-core"]

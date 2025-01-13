@@ -362,6 +362,7 @@ lib.composeManyExtensions [
             "4.1.2" = "sha256-fTD1AKvyeni5ukYjK53gueKLey+rcIUjW/0R289xeb0=";
             "4.1.3" = "sha256-Uag1pUuis5lpnus2p5UrMLa4HP7VQLhKxR5TEMfpK0s=";
             "4.2.0" = "sha256-dOS9A3pTwXYkzPFFNh5emxJw7pSdDyY+mNIoHdwNdmg=";
+            "4.2.1" = "sha256-vbGF0oOhEDg3QIyQ0lASqbWtTWXiPAmGMnlF9I+hU78=";
           }.${version} or (
             lib.warn "Unknown bcrypt version: '${version}'. Please update getCargoHash." lib.fakeHash
           );
@@ -616,6 +617,7 @@ lib.composeManyExtensions [
             "43.0.0" = "sha256-TEQy8PrIaZshiBFTqR/OJp3e/bVM1USjcmpDYcjPJPM=";
             "43.0.1" = "sha256-wiAHM0ucR1X7GunZX8V0Jk2Hsi+dVdGgDKqcYjSdD7Q=";
             "43.0.3" = "sha256-d3Gt4VrBWk6qowwX0Epp4mc1PbySARVU9YMsHYKImCs=";
+            "44.0.0" = "sha256-LJIY2O8ul36JQmhiW8VhLCQ0BaX+j+HGr3e8RUkZpc8=";
           }.${version} or (
             lib.warn "Unknown cryptography version: '${version}'. Please update getCargoHash." lib.fakeHash
           );
@@ -652,7 +654,7 @@ lib.composeManyExtensions [
                   name = "${old.pname}-${old.version}";
                   inherit sha256;
                 };
-              cargoRoot = "src/rust";
+              cargoRoot = if lib.versionAtLeast old.version "44" then "." else "src/rust";
             }
           );
 
@@ -881,9 +883,6 @@ lib.composeManyExtensions [
         '';
       };
 
-      # FIXME: this is a workaround for https://github.com/nix-community/poetry2nix/issues/1161
-      eth-utils = prev.eth-utils.override { preferWheel = true; };
-
       evdev = prev.evdev.overridePythonAttrs (_old: {
         preConfigure = ''
           substituteInPlace setup.py --replace-warn /usr/include/linux ${pkgs.linuxHeaders}/include/linux
@@ -975,9 +974,26 @@ lib.composeManyExtensions [
         '';
       });
 
+      gmsh = prev.gmsh.overridePythonAttrs (
+        old: {
+          buildInputs = old.buildInputs or [ ] ++ [
+            pkgs.libGLU
+            pkgs.xorg.libXcursor
+            pkgs.xorg.libXft
+            pkgs.xorg.libXinerama
+          ];
+        }
+      );
+
       gnureadline = prev.gnureadline.overridePythonAttrs (
         old: {
           buildInputs = old.buildInputs or [ ] ++ [ pkgs.ncurses ];
+        }
+      );
+
+      google-re2 = prev.google-re2.overridePythonAttrs (
+        old: {
+          buildInputs = old.buildInputs or [ ] ++ [ pkgs.abseil-cpp final.pybind11 pkgs.re2 ];
         }
       );
 
@@ -2942,6 +2958,9 @@ lib.composeManyExtensions [
           pkgs.xorg.libxshmfence
           pkgs.xorg.libxkbfile
         ];
+        postInstall = ''
+          rm -r $out/${final.python.sitePackages}/PySide6/__pycache__/
+        '';
       });
       pyside6 = prev.pyside6.overridePythonAttrs (_old: {
         # The PySide6/__init__.py script tries to find the Qt libraries
@@ -2956,6 +2975,7 @@ lib.composeManyExtensions [
         postFixup = ''
           ${pkgs.xorg.lndir}/bin/lndir ${final.pyside6-essentials}/${final.python.sitePackages}/PySide6 $out/${final.python.sitePackages}/PySide6
           ${pkgs.xorg.lndir}/bin/lndir ${final.pyside6-addons}/${final.python.sitePackages}/PySide6 $out/${final.python.sitePackages}/PySide6
+          rm -r $out/${final.python.sitePackages}/PySide6/__pycache__/
         '';
       });
 
@@ -3296,6 +3316,8 @@ lib.composeManyExtensions [
             "0.19.1" = "sha256-qIXdoCEVGCGUnTicZp4bUTJyGpFy9dwWY03lXUbxiHg=";
             "0.20.0" = "sha256-5vbR2EbrAPJ8pb78tj/+r9nOWgQDT5aO/LUQI4kAGjU=";
             "0.20.1" = "sha256-vqJCGlp5S2wECfgleCexCb9xegA8b6wo7YNBbcsbXqk=";
+            "0.21.0" = "sha256-VOmMNEdKHrPKJzs+D735Y52y47MubPwLlfkvB7Glh14=";
+            "0.22.3" = "sha256-m01OB4CqDowlTAiDQx6tJ7SeP3t+EtS9UZ7Jad6Ccvc=";
           }.${version} or (
             lib.warn "Unknown rpds-py version: '${version}'. Please update getCargoHash." lib.fakeHash
           );
@@ -3341,6 +3363,20 @@ lib.composeManyExtensions [
           #       echo "\"${version#v}\" = \"$(echo "$nix_prefetch" | jq -r ".sha256 // .hash")\";"
           #     done' _
           getRepoHash = version: {
+            "0.8.6" = "sha256-9YvHmNiKdf5hKqy9tToFSQZM2DNLoIiChcfjQay8wbU=";
+            "0.7.4" = "sha256-viDjUfj/OWYU7Fa7mqD2gYoirKFSaTXPPi0iS7ibiiU=";
+            "0.7.3" = "sha256-TQ7nBd2S77VYShYxpxZ3CfCMiOGyl9EtIv9nXZjmijc=";
+            "0.7.2" = "sha256-9zbLlQfDeqdUp1AKP/NRMZl9KeTyyTJz7JZVW/GGRM0=";
+            "0.7.1" = "sha256-TPr6YdSb5JKltXHDi1PdGzPYjmmsbCFQKxIiJURrBMI=";
+            "0.7.0" = "sha256-//ayB5ayYM5FqiSXDDns2tIL+PJ0Osvkp8+MEEL0L+8=";
+            "0.6.9" = "sha256-O8iRCVxHrchBSf9kLdkdT0+oMi+5fLCAF9CMEsPrHqw=";
+            "0.6.8" = "sha256-guRg35waq6w+P8eaXJFwMtROoXU3d3yURGwzG2SIzhc=";
+            "0.6.7" = "sha256-1udxvl98RveGJmnG8kwlecWD9V+BPadA/YE8jbt9jNo=";
+            "0.6.6" = "sha256-8EKOBlF6bgjgB5t3KP4AcWU7YkLaiFoAj+wuJWEOAic=";
+            "0.6.5" = "sha256-1V95S0FWHzCxztgip+rbCjji4O71D+QdcSZ/hbABeKg=";
+            "0.6.4" = "sha256-AldYWbLtkVtM1sWBCgNym9RZ0QszIh59vQhoysl5/3I=";
+            "0.6.3" = "sha256-5jS2NCl01kgUAd8hFtjJCOwRxi0XMM2x7VMpJLEgbOQ=";
+            "0.6.2" = "sha256-pdaOTMzEOfAKFK+P/4f51bQbmCssMNvq2OGvGVPzvhw=";
             "0.6.1" = "sha256-/tD1TJRq+/2/KMmRHqB8ZbShoDkXG9nnBqacxXYKjbg=";
             "0.6.0" = "sha256-s4JIqeOIxJ3NQ61fuBYYF0kSovEMcVHRExLB7kpICeg=";
             "0.5.7" = "sha256-swnh2bfmwPP1BHlnKbOtRdskMMArZgP/ErtrnXKRiC8=";
@@ -3417,6 +3453,42 @@ lib.composeManyExtensions [
           );
 
           getCargoHash = version: {
+            "0.8.6" = {
+              # https://raw.githubusercontent.com/astral-sh/ruff/0.8.6/Cargo.lock
+              lockFile = ./ruff/0.8.6-Cargo.lock;
+              outputHashes = {
+                "lsp-types-0.95.1" = "sha256-8Oh299exWXVi6A39pALOISNfp8XBya8z+KT/Z7suRxQ=";
+                # lock file has a revision override
+                "salsa-0.18.0" = "sha256-esWNyc3TcIhFul4VjtZH991aZp03BUVgvzCFqt6GtUg=";
+              };
+            };
+            "0.7.4" = {
+              # https://raw.githubusercontent.com/astral-sh/ruff/0.7.4/Cargo.lock
+              lockFile = ./ruff/0.7.4-Cargo.lock;
+              outputHashes = {
+                "lsp-types-0.95.1" = "sha256-8Oh299exWXVi6A39pALOISNfp8XBya8z+KT/Z7suRxQ=";
+                # lock file has a revision override
+                "salsa-0.18.0" = "sha256-zUF2ZBorJzgo8O8ZEnFaitAvWXqNwtHSqx4JE8nByIg=";
+              };
+            };
+            "0.7.3" = {
+              # https://raw.githubusercontent.com/astral-sh/ruff/0.7.3/Cargo.lock
+              lockFile = ./ruff/0.7.3-Cargo.lock;
+              outputHashes = {
+                "lsp-types-0.95.1" = "sha256-8Oh299exWXVi6A39pALOISNfp8XBya8z+KT/Z7suRxQ=";
+                # lock file has a revision override
+                "salsa-0.18.0" = "sha256-zUF2ZBorJzgo8O8ZEnFaitAvWXqNwtHSqx4JE8nByIg=";
+              };
+            };
+            "0.7.2" = {
+              # https://raw.githubusercontent.com/astral-sh/ruff/0.7.2/Cargo.lock
+              lockFile = ./ruff/0.7.2-Cargo.lock;
+              outputHashes = {
+                "lsp-types-0.95.1" = "sha256-8Oh299exWXVi6A39pALOISNfp8XBya8z+KT/Z7suRxQ=";
+                # lock file has a revision override
+                "salsa-0.18.0" = "sha256-zUF2ZBorJzgo8O8ZEnFaitAvWXqNwtHSqx4JE8nByIg=";
+              };
+            };
             "0.6.1" = {
               # https://raw.githubusercontent.com/astral-sh/ruff/0.6.1/Cargo.lock
               lockFile = ./ruff/0.6.1-Cargo.lock;
@@ -3902,6 +3974,19 @@ lib.composeManyExtensions [
         propagatedBuildInputs = old.propagatedBuildInputs or [ ] ++ [
           final.numpy
           final.packaging
+        ];
+      });
+
+      torchaudio = prev.torchaudio.overridePythonAttrs (old: {
+        autoPatchelfIgnoreMissingDeps = true;
+
+        # (no patchelf on darwin, since no elves there.)
+        preFixup = lib.optionals (!stdenv.isDarwin) ''
+          addAutoPatchelfSearchPath "${final.torch}/${final.python.sitePackages}/torch/lib"
+        '';
+
+        buildInputs = old.buildInputs or [ ] ++ [
+          final.torch
         ];
       });
 
